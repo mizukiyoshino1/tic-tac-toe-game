@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./App.css";
 
 /**
- * ボード１マス分のコンポーネント
+ * Squareコンポーネント
  * 
  */
 function Square({ value, onSquareClick }) {
@@ -12,53 +12,49 @@ function Square({ value, onSquareClick }) {
 }
 
 /**
- * ボード全体のコンポーネント
+ * Boardコンポーネント
  * 
  */
 function Board({ xIsNext, squares, onPlay }) {
-  // クリック時処理
-  function handleClick(i) {
+  // ゲーム状況表示用ステータス
+  const status = calculateWinner(squares) 
+    ? "Winner: " + calculateWinner(squares)
+    : "Next player: " + (xIsNext ? "X" : "O");
+
+  // ボードを作成する処理
+  const renderBoardRows = () => {
+    // 行を作成
+    const boardRows = [];
+    for(let row = 0; row < 3; row++){
+      const squareRow =[];
+      // 各行内の列を作成
+      for(let col = 0; col < 3; col++){
+        const index = row * 3 + col;
+        squareRow.push(
+          <Square key={index} value={squares[index]} onSquareClick={() => handleClick(index)}/>
+        );
+      }
+      boardRows.push(
+        <div key={row} className="board-row">{squareRow}</div>
+      );
+    }
+    return boardRows;
+  };
+
+  // ボードクリック処理
+  const handleClick = (i) => {
     if(calculateWinner(squares) || squares[i]){
       return;
     }
     const nextSquares = squares.slice();
-    if(xIsNext){
-      nextSquares[i] = "X";
-    } else {
-      nextSquares[i] = "O";
-    }
+    nextSquares[i] = xIsNext ? "X" : "O";
     onPlay(nextSquares);
-  }
-
-  // 勝敗判定
-  const winner = calculateWinner(squares);
-  let status;
-  if(winner){
-    status = "Winner: " + winner;
-  } else {
-    status = "Next player: " + (xIsNext ? "X" : "O");
-  }
-
-  // ボード(行)を作成する処理
-  const boardRows = [];
-  for(let row = 0; row < 3; row++){
-    const squareRow =[];
-    // 各行内の列を作成
-    for(let col = 0; col < 3; col++){
-      const index = row * 3 + col;
-      squareRow.push(
-        <Square key={index} value={squares[index]} onSquareClick={() => handleClick(index)}/>
-      );
-    }
-    boardRows.push(
-      <div key={row} className="board-row">{squareRow}</div>
-    );
   }
 
   return (
     <>
       <div className="status">{status}</div>
-      {boardRows}
+      {renderBoardRows()}
     </>
   )
 }
@@ -89,18 +85,11 @@ function calculateWinner(squares){
 }
 
 /**
- * メインのコンポーネント
+ * MoveButtonコンポーネント
  * 
  */
-export default function Game(){
-  const [history, setHistory] = useState([Array(9).fill(null)]);
-  const [currentMove, setCurrentMove] = useState(0);
-  const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove];
-
-  //過去の情報へジャンプできるボタン作成処理
-  const moves = history.map((squares, move) => {
-    let description;
+function MoveButton({ move, currentMove, onClick}){
+  let description;
     if(move > 0 && move === currentMove){
       description = 'You are at move #' + move;
     } else if(move > 0) {
@@ -119,11 +108,33 @@ export default function Game(){
     } else {
       return (
         <li key={move}>
-          <button onClick={() => jumpTo(move)}>{description}</button>
+          <button onClick={() => onClick(move)}>{description}</button>
         </li>
       );
     }
-  });
+}
+
+/**
+ * Moveコンポーネント
+ * 
+ */
+function Moves({ history, currentMove, jumpTo }){
+  const moveButtons = history.map((squares, move) => (
+    <MoveButton key={move} move={move} currentMove={currentMove} onClick={jumpTo} />
+  ));
+
+  return <ol>{ moveButtons }</ol>;
+}
+
+/**
+ * Gameコンポーネント
+ * 
+ */
+export default function Game(){
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [currentMove, setCurrentMove] = useState(0);
+  const xIsNext = currentMove % 2 === 0;
+  const currentSquares = history[currentMove];
 
   //ボートクリック時の処理
   function handlePlay(nextSquares){
@@ -143,7 +154,7 @@ export default function Game(){
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
       </div>
       <div className="game-info">
-        <ol>{moves}</ol>
+        <Moves history={history} currentMove={currentMove} jumpTo={jumpTo} />
       </div>
     </div>
   );
