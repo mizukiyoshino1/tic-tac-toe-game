@@ -5,9 +5,17 @@ import "./App.css";
  * Squareコンポーネント
  * 
  */
-function Square({ value, onSquareClick }) {
+function Square({ value, onSquareClick, isWinnerSquare }) {
+  const squareStyle = isWinnerSquare ? { background: 'yellow'} : {};
+
   return (
-    <button className="square" onClick={onSquareClick}>{ value }</button>
+    <button
+      className="square"
+      onClick={onSquareClick}
+      style={squareStyle}
+    >
+      { value }
+    </button>
   );
 }
 
@@ -17,9 +25,17 @@ function Square({ value, onSquareClick }) {
  */
 function Board({ xIsNext, squares, onPlay }) {
   // ゲーム状況表示用ステータス
-  const status = calculateWinner(squares) 
-    ? "Winner: " + calculateWinner(squares)
-    : "Next player: " + (xIsNext ? "X" : "O");
+  const result = calculateWinner(squares);
+  const winner = result ? result.winner : null;
+  const winningSquares = result ? result.winningSquares : [];
+  let status;
+  if(winner){
+    status = "Winner: " + winner;
+  } else if (!winner && squares.every(array => array !== null)) {
+    status = "Draw!!";
+  } else {
+    status = "Next player: " + (xIsNext ? "X" : "O");
+  }
 
   // ボードを作成する処理
   const renderBoardRows = () => {
@@ -30,8 +46,15 @@ function Board({ xIsNext, squares, onPlay }) {
       // 各行内の列を作成
       for(let col = 0; col < 3; col++){
         const index = row * 3 + col;
+        const isWinnerSquare = winner && winningSquares.includes(index);
+
         squareRow.push(
-          <Square key={index} value={squares[index]} onSquareClick={() => handleClick(index)}/>
+          <Square 
+            key={index}
+            value={squares[index]}
+            onSquareClick={() => handleClick(index)}
+            isWinnerSquare={isWinnerSquare}
+          />
         );
       }
       boardRows.push(
@@ -78,7 +101,7 @@ function calculateWinner(squares){
   for(let i = 0;i < lines.length; i++){
     const [a,b,c] = lines[i];
     if(squares[a] && squares[a] === squares[b] && squares[a] === squares[c]){
-      return squares[a];
+      return {winner: squares[a], winningSquares: lines[i]};
     }
   }
   return null;
@@ -119,11 +142,24 @@ function MoveButton({ move, currentMove, onClick}){
  * 
  */
 function Moves({ history, currentMove, jumpTo }){
-  const moveButtons = history.map((squares, move) => (
+  const [isAscending, setAscending] = useState(true);
+
+  // 昇順降順変更処理
+  const toggleOrder = () => {
+    setAscending(!isAscending);
+  }
+
+  // MoveButton生成
+  const moveButtons = history.slice().reverse().map((squares, move) => (
     <MoveButton key={move} move={move} currentMove={currentMove} onClick={jumpTo} />
   ));
 
-  return <ol>{ moveButtons }</ol>;
+  return (
+    <>
+      <button onClick={toggleOrder}>toggleOrder</button>
+      <ol>{ isAscending ? moveButtons : moveButtons.reverse()}</ol>
+    </>
+  );
 }
 
 /**
