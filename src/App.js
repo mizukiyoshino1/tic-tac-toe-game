@@ -6,7 +6,7 @@ import "./App.css";
  * 
  */
 function Square({ value, onSquareClick, isWinnerSquare }) {
-  const squareStyle = isWinnerSquare ? { background: 'yellow'} : {};
+  const squareStyle = isWinnerSquare ? { background: '#6699FF'} : {};
 
   return (
     <button
@@ -156,7 +156,7 @@ function Moves({ history, currentMove, jumpTo }){
 
   return (
     <>
-      <button onClick={toggleOrder}>toggleOrder</button>
+      <button onClick={toggleOrder} className="toggle-button">toggleOrder</button>
       <ol>{ isAscending ? moveButtons : moveButtons.reverse()}</ol>
     </>
   );

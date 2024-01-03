@@ -3,62 +3,24 @@
 }
 
 body {
-    font-family: sans-serif;
+    font-family: 'Helvetica Neue', sans-serif;
     margin: 20px;
     padding: 0;
+    background-color: #282c34;
+    color: white;
 }
 
-h1 {
+h1, h2, h3, h4, h5, h6 {
     margin-top: 0;
-    font-size: 22px;
-}
-
-h2 {
-    margin-top: 0;
-    font-size: 20px;
-}
-
-h3 {
-    margin-top: 0;
-    font-size: 18px;
-}
-
-h4 {
-    margin-top: 0;
-    font-size: 16px;
-}
-
-h5 {
-    margin-top: 0;
-    font-size: 14px;
-}
-
-h6 {
-    margin-top: 0;
-    font-size: 12px;
-}
-
-code {
-    font-size: 1.2em;
 }
 
 ul {
     padding-inline-start: 20px;
 }
 
-* {
-    box-sizing: border-box;
-}
-
-body {
-    font-family: sans-serif;
-    margin: 20px;
-    padding: 0;
-}
-
 .square {
-    background: #fff;
-    border: 1px solid #999;
+    background: #61dafb;
+    border: 1px solid #4b9cdb;
     float: left;
     font-size: 24px;
     font-weight: bold;
@@ -69,6 +31,12 @@ body {
     padding: 0;
     text-align: center;
     width: 34px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.square:hover {
+    background: #4b9cdb;
 }
 
 .board-row:after {
@@ -79,7 +47,9 @@ body {
 
 .status {
     margin-bottom: 10px;
+    font-size: 1.2em;
 }
+
 .game {
     display: flex;
     flex-direction: row;
@@ -87,4 +57,59 @@ body {
 
 .game-info {
     margin-left: 20px;
+}
+
+button {
+    font-size: 1em;
+    padding: 10px;
+    margin: 5px;
+    background-color: #61dafb;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: #4b9cdb;
+}
+
+ol {
+    list-style-type: none;
+    padding: 0;
+}
+
+li p {
+    margin: 0;
+}
+
+.move-button {
+    margin-bottom: 8px;
+}
+
+.moves-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.toggle-button {
+    margin-top: 10px;
+    background-color: #61dafb;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.toggle-button:hover {
+    background-color: #4fa3d1;
+}
+
+.ascending {
+    /* スタイルがあれば追加 */
+}
+
+.descending {
+    /* スタイルがあれば追加 */
 }
